@@ -33,6 +33,25 @@
     <!-- Performance Monitor -->
     <div id="fps">FPS: --</div>
     
+    <!-- Mobile Virtual Joystick -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="joystick-container" id="joystickContainer">
+            <div class="joystick-base"></div>
+            <div class="joystick-handle" id="joystickHandle"></div>
+            <div class="joystick-directions">
+                <div class="direction-indicator north"></div>
+                <div class="direction-indicator south"></div>
+                <div class="direction-indicator east"></div>
+                <div class="direction-indicator west"></div>
+            </div>
+        </div>
+        
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomInBtn">+</button>
+            <button class="zoom-btn" id="zoomOutBtn">−</button>
+        </div>
+    </div>
+    
     <!-- Dynamic Introduction Overlay -->
     <div id="overlay">
         <!-- MAIN CONTENT CONTAINER -->
@@ -50,7 +69,7 @@
             <!-- AVATAR CONTAINER -->
             <div class="avatar-container">
                 <svg class="developer-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Simplified but high-quality gradients -->
+                    <!-- Optimized gradients -->
                     <defs>
                         <radialGradient id="bgGradient" cx="50%" cy="30%" r="70%">
                             <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
@@ -120,7 +139,7 @@
                     <rect x="140" y="270" width="120" height="60" rx="6" fill="#636e72"/>
                     <rect x="150" y="280" width="100" height="40" rx="3" fill="#2d3436"/>
                     
-                    <!-- Code lines -->
+                    <!-- Optimized code lines -->
                     <g stroke="#ffffff" stroke-width="2" stroke-linecap="round">
                         <line x1="160" y1="220" x2="220" y2="220" opacity="0.9">
                             <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/>
@@ -150,7 +169,7 @@
             </div>
         </div>
         
-        <!-- CTA BUTTON - CENTERED TO VISUAL CENTER OF COMBINED CONTENT -->
+        <!-- CTA BUTTON - FIXED POSITIONING -->
         <div class="cta-centered">
             <a href="#about" class="cta-button">
                 <span>Explore My Work</span>

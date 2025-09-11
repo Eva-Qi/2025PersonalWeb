@@ -1,7 +1,7 @@
 /* ===================================
    EVANOLOTT - Professional Portfolio
    Eva Qi Dynamic 3D Portfolio Styles
-   VISUAL BALANCE & OPTICAL CENTER VERSION
+   VISUAL BALANCE & OPTICAL CENTER VERSION - UPDATED
    =================================== */
 
 /* Reset & Base Styles */
@@ -58,6 +58,118 @@ canvas {
     padding: 8px;
     border-radius: 4px;
     transition: opacity 0.3s ease;
+}
+
+/* ===================================
+   MOBILE VIRTUAL JOYSTICK
+   =================================== */
+
+.mobile-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 150;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mobile-controls.visible {
+    display: flex;
+}
+
+.joystick-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    touch-action: none;
+    user-select: none;
+}
+
+.joystick-base {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+}
+
+.joystick-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, #f093fb, #f5576c);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+}
+
+.joystick-handle.active {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+}
+
+.joystick-directions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.direction-indicator {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+}
+
+.direction-indicator.north { top: 8px; left: 50%; transform: translateX(-50%); }
+.direction-indicator.south { bottom: 8px; left: 50%; transform: translateX(-50%); }
+.direction-indicator.east { right: 8px; top: 50%; transform: translateY(-50%); }
+.direction-indicator.west { left: 8px; top: 50%; transform: translateY(-50%); }
+
+.zoom-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.zoom-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    touch-action: manipulation;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.zoom-btn:hover, .zoom-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
 }
 
 /* ===================================
@@ -157,21 +269,21 @@ canvas {
 }
 
 /* ===================================
-   DYNAMIC ROLE SYSTEM - MUCH LARGER
+   DYNAMIC ROLE SYSTEM - FIXED SIZING & SPACING
    =================================== */
 
 .dynamic-role {
-    /* SIGNIFICANTLY LARGER for desktop/tablet */
-    font-size: clamp(1.3rem, 4.5vw, 3.2rem);
+    /* SIGNIFICANTLY LARGER fonts and REDUCED margin for less gap */
+    font-size: clamp(1.6rem, 5.5vw, 4rem);
     font-weight: 700;
     letter-spacing: clamp(0.5px, 0.1vw, 1px);
-    min-height: clamp(40px, 8vh, 70px);
+    min-height: clamp(50px, 10vh, 80px);
     display: flex;
     align-items: center;
     transition: all 0.5s ease;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     transition-delay: 0.8s;
-    margin-bottom: clamp(20px, 3vh, 30px);
+    margin-bottom: clamp(8px, 1.5vh, 15px);
 }
 
 .role-text {
@@ -242,13 +354,13 @@ canvas {
 }
 
 /* ===================================
-   CTA BUTTON - CENTERED TO VISUAL CENTER OF COMBINED CONTENT
+   CTA BUTTON - REDUCED GAP POSITIONING
    =================================== */
 
 .cta-centered {
-    /* Position below main content, centered to the visual center of combined elements */
+    /* Position below main content, MUCH CLOSER to reduce gap */
     position: absolute;
-    bottom: clamp(40px, 6vh, 80px);
+    bottom: clamp(35px, 5vh, 60px);
     /* Center to the visual center of the combined content width */
     left: 50%;
     transform: translateX(-50%) translateY(30px);
@@ -341,14 +453,14 @@ canvas {
 
 /* ===================================
    RESPONSIVE BREAKPOINTS
-   ONLY DESKTOP/TABLET CHANGES - MOBILE UNCHANGED
+   UPDATED WITH LARGER FONTS & REDUCED GAPS
    =================================== */
 
 /* Large tablets and small desktops */
 @media (max-width: 1024px) {
     .main-content {
-        gap: clamp(18px, 2.5vw, 35px);
-        max-width: min(92vw, 750px);
+        gap: clamp(25px, 3.5vw, 50px); /* Increased from 18px-35px */
+        max-width: min(92vw, 800px); /* Slightly wider */
     }
     
     .intro-text-container {
@@ -360,15 +472,15 @@ canvas {
         height: clamp(140px, 16vw, 220px);
     }
     
-    /* Slightly reduce role size for smaller desktop screens */
+    /* LARGER role fonts for tablets */
     .dynamic-role {
-        font-size: clamp(1.3rem, 4vw, 2.8rem);
-        min-height: clamp(40px, 7vh, 60px);
+        font-size: clamp(1.5rem, 5vw, 3.5rem);
+        min-height: clamp(45px, 8vh, 70px);
     }
 }
 
 /* ===================================
-   MOBILE LAYOUT - UNCHANGED AS REQUESTED
+   MOBILE LAYOUT - UPDATED WITH FIXES
    =================================== */
 
 /* Tablets and mobile landscape */
@@ -402,16 +514,19 @@ canvas {
     
     .dynamic-role {
         justify-content: center;
-        margin-bottom: clamp(12px, 1.5vh, 18px);
+        margin-bottom: clamp(8px, 1vh, 12px);
+        /* LARGER mobile role fonts */
+        font-size: clamp(1.3rem, 5.5vw, 2rem);
+        min-height: clamp(40px, 6vh, 50px);
     }
     
-    /* Mobile CTA positioning - back to flowing with text */
+    /* Mobile CTA positioning - REDUCED gap */
     .cta-centered {
         position: relative;
         bottom: auto;
         left: auto;
         transform: translateY(30px);
-        margin-top: clamp(6px, 1vh, 10px);
+        margin-top: clamp(10px, 1.5vh, 20px);
     }
     
     /* KEEP ORIGINAL MOBILE TEXT SIZES */
@@ -427,13 +542,18 @@ canvas {
         font-size: clamp(1rem, 4vw, 1.3rem);
     }
     
-    .dynamic-role {
-        font-size: clamp(1.1rem, 4.2vw, 1.5rem);
-        min-height: clamp(35px, 5vh, 40px);
+    #overlay.active .cta-centered {
+        transform: translateY(0); /* Matches reduced mobile animation */
     }
     
-    #overlay.active .cta-centered {
-        transform: translateY(0);
+    /* Show mobile controls */
+    .mobile-controls.visible {
+        display: flex;
+    }
+    
+    /* Hide desktop hint on mobile */
+    #timed-hint {
+        display: none;
     }
 }
 
@@ -456,6 +576,22 @@ canvas {
     #info, #fps {
         font-size: 11px;
         padding: 6px;
+    }
+    
+    .joystick-container {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .joystick-handle {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .zoom-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
     }
 }
 

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Evanolott - Professional portfolio showcasing expertise in development, quantitative research, art, education, entrepreneurship, and wine.">
+    <meta name="author" content="Evanolott">
+    <title>Portfolio - Evanolott</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===================================
+           PROFESSIONAL PORTFOLIO STYLES
+           Eva Qi Portfolio Landing Page
+           =================================== */
+        
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        /* Prevent text selection on all elements */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        /* Allow text selection only for actual content paragraphs */
+        .project-description p,
+        .journey-description p,
+        .bio-text p {
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+        
+        /* ===================================
+           NAVIGATION
+           =================================== */
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        
+        .logo {
+            font-family: 'Scheherazade New', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: #f093fb;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Mobile menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            right: -100%;
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: rgba(26, 26, 46, 0.98);
+            backdrop-filter: blur(20px);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+        
+        .mobile-menu.active {
+            right: 0;
+        }
+        
+        .mobile-nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: color 0.3s ease;
+        }
+        
+        .mobile-nav-link:hover {
+            color: #f093fb;
+        }
+        
+        /* ===================================
+           HERO SECTION
+           =================================== */
+        
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(240, 147, 251, 0.1), transparent),
+                        radial-gradient(circle at 70% 30%, rgba(245, 87, 108, 0.1), transparent);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-family: 'Scheherazade New', serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .hero-nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .hero-btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero-btn:hover {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+        
+        /* ===================================
+           SECTION STYLES
+           =================================== */
+        
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-family: 'Scheherazade New', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        
+        /* ===================================
+           PROJECTS SECTION
+           =================================== */
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(240, 147, 251, 0.05), rgba(245, 87, 108, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        
+        .project-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .project-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tech-tag {
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #f093fb;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .project-link:hover {
+            color: #f5576c;
+        }
+        
+        /* ===================================
+           JOURNEY SECTION
+           =================================== */
+        
+        .journey {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+        }
+        
+        .journey-timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #f093fb, #f5576c);
+            transform: translateX(-50%);
+        }
+        
+        .journey-item {
+            display: flex;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .journey-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .journey-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 0 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .journey-year {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f093fb;
+            margin-bottom: 10px;
+        }
+        
+        .journey-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .journey-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
+        .journey-dot {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 15px;
+            background: #f093fb;
+            border-radius: 50%;
+            border: 3px solid #1a1a2e;
+            z-index: 2;
+        }
+        
+        /* ===================================
+           RESPONSIVE DESIGN
+           =================================== */
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .hero-nav {
+                gap: 15px;
+            }
+            
+            .hero-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .project-card {
+                padding: 25px;
+            }
+            
+            .timeline-line {
+                left: 20px;
+            }
+            
+            .journey-item {
+                flex-direction: column;
+                padding-left: 50px;
+            }
+            
+            .journey-item:nth-child(even) {
+                flex-direction: column;
+            }
+            
+            .journey-content {
+                margin: 0;
+            }
+            
+            .journey-dot {
+                left: 20px;
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            .hero-content {
+                padding: 0 15px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .mobile-menu {
+                padding: 20px 15px;
+            }
+        }
+        
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        .project-link:focus-visible,
+        .hero-btn:focus-visible,
+        .nav-link:focus-visible {
+            outline: 2px solid #f093fb;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="has-navbar">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="./index.html" class="logo">Eva Qi</a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#journey" class="nav-link">Journey</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="mobile-menu">
+            <a href="#home" class="mobile-nav-link" onclick="toggleMobileMenu()">Home</a>
+            <a href="#projects" class="mobile-nav-link" onclick="toggleMobileMenu()">Projects</a>
+            <a href="#journey" class="mobile-nav-link" onclick="toggleMobileMenu()">Journey</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Evanolott</h1>
+            <p class="hero-subtitle">Developer • Quant Researcher • Artist • Educator • Entrepreneur • Wine Connoisseur</p>
+            <div class="hero-nav">
+                <a href="#projects" class="hero-btn">View Projects</a>
+                <a href="#journey" class="hero-btn">My Journey</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container">
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-icon">💻</div>
+                    <h3 class="project-title">3D Interactive Portfolio</h3>
+                    <div class="project-description">
+                        <p>An immersive 3D portfolio experience built with Three.js, featuring dynamic lens effects, mobile controls, and professional animations. Showcases modern web development techniques and creative design.</p>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Three.js</span>
+                        <span class="tech-tag">WebGL</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">CSS3</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-icon">📊</div>
+                    <h3 class="project-title">Quantitative Research Platform</h3>
+                    <div class="project-description">
+                        <p>Advanced financial modeling and analysis platform with real-time data processing, risk assessment algorithms, and interactive visualizations for institutional research.</p>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">NumPy</span>
+                        <span class="tech-tag">Pandas</span>
+                        <span class="tech-tag">React</span>
+                    </div>
+                    <a href="#" class="project-link">View Research →</a>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-icon">🎨</div>
+                    <h3 class="project-title">Digital Art Collection</h3>
+                    <div class="project-description">
+                        <p>A curated collection of digital artworks exploring the intersection of technology and creativity, featuring generative art, interactive installations, and multimedia experiences.</p>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag">p5.js</span>
+                        <span class="tech-tag">Processing</span>
+                        <span class="tech-tag">Adobe Creative Suite</span>
+                        <span class="tech-tag">Blender</span>
+                    </div>
+                    <a href="#" class="project-link">View Gallery →</a>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-icon">🚀</div>
+                    <h3 class="project-title">EdTech Startup Initiative</h3>
+                    <div class="project-description">
+                        <p>Co-founded an educational technology startup focused on personalized learning experiences, developing innovative curriculum delivery systems and student assessment tools.</p>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Vue.js</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">AWS</span>
+                    </div>
+                    <a href="#" class="project-link">Learn More →</a>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-icon">🍷</div>
+                    <h3 class="project-title">Wine Analytics Platform</h3>
+                    <div class="project-description">
+                        <p>Data-driven wine recommendation and analysis system combining sensory science with machine learning to predict preferences and optimize wine selection.</p>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Machine Learning</span>
+                        <span class="tech-tag">TensorFlow</span>
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Data Visualization</span>
+                    </div>
+                    <a href="#" class="project-link">Explore Platform →</a>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-icon">📚</div>
+                    <h3 class="project-title">Educational Content Library</h3>
+                    <div class="project-description">
+                        <p>Comprehensive learning resources and interactive tutorials covering programming, mathematics, and creative skills, designed for diverse learning styles and skill levels.</p>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag">Interactive Design</span>
+                        <span class="tech-tag">Video Production</span>
+                        <span class="tech-tag">Curriculum Development</span>
+                        <span class="tech-tag">UX Design</span>
+                    </div>
+                    <a href="#" class="project-link">Access Library →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journey Section -->
+    <section id="journey" class="section journey">
+        <div class="container">
+            
+            <div class="journey-timeline">
+                <div class="timeline-line"></div>
+                
+                <div class="journey-item">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content">
+                        <div class="journey-year">2024-Present</div>
+                        <h3 class="journey-title">Full-Stack Development & 3D Web Experiences</h3>
+                        <div class="journey-description">
+                            <p>Specializing in modern web development with focus on immersive 3D experiences, WebGL applications, and cutting-edge frontend technologies. Creating interactive portfolios and professional web applications.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-item">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content">
+                        <div class="journey-year">2022-2024</div>
+                        <h3 class="journey-title">Quantitative Research & Financial Modeling</h3>
+                        <div class="journey-description">
+                            <p>Advanced quantitative analysis in financial markets, developing sophisticated models for risk assessment and algorithmic trading strategies. Worked with large datasets and statistical modeling techniques.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-item">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content">
+                        <div class="journey-year">2021-2023</div>
+                        <h3 class="journey-title">Educational Technology Innovation</h3>
+                        <div class="journey-description">
+                            <p>Co-founded an EdTech startup focused on personalized learning experiences. Developed curriculum delivery systems and pioneered new approaches to student assessment and engagement.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-item">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content">
+                        <div class="journey-year">2020-2022</div>
+                        <h3 class="journey-title">Digital Art & Creative Technology</h3>
+                        <div class="journey-description">
+                            <p>Explored the intersection of technology and creativity through generative art, interactive installations, and multimedia projects. Developed skills in creative coding and digital design.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-item">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content">
+                        <div class="journey-year">2019-2021</div>
+                        <h3 class="journey-title">Wine Studies & Sensory Analysis</h3>
+                        <div class="journey-description">
+                            <p>Developed expertise in wine appreciation, terroir analysis, and sensory science. Combined traditional wine knowledge with modern data analysis techniques to create innovative wine recommendation systems.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="journey-item">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content">
+                        <div class="journey-year">2018-2020</div>
+                        <h3 class="journey-title">Educational Foundation & Teaching</h3>
+                        <div class="journey-description">
+                            <p>Built strong educational foundations while developing teaching and mentorship skills. Created learning resources and tutored students in mathematics, programming, and creative problem-solving.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const hamburger = document.querySelector('.hamburger');
+            
+            mobileMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 70; // Account for fixed navbar
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(26, 26, 46, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(26, 26, 46, 0.95)';
+            }
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const hamburger = document.querySelector('.hamburger');
+            const navbar = document.querySelector('.navbar');
+            
+            if (!navbar.contains(event.target) && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+        
+        // Add active state to hamburger
+        const style = document.createElement('style');
+        style.textContent = `
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe project cards and journey items
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectCards = document.querySelectorAll('.project-card');
+            const journeyItems = document.querySelectorAll('.journey-item');
+            
+            // Initial state for animations
+            [...projectCards, ...journeyItems].forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>
+                        

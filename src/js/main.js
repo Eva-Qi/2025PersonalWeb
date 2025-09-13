@@ -5,6 +5,7 @@
  * KEY OPTIMIZATIONS:
  * - Efficient rendering with conditional updates
  * - Mobile virtual joystick controls
+ * - Single "Click Me" button for smooth zoom
  * - Improved performance monitoring
  * - Clean code architecture
  * - Better UX positioning
@@ -42,6 +43,7 @@ class OptimizedPortfolio3DRenderer {
         this.minScale = 0.8;
         this.maxScale = 2.5;
         this.zoomThreshold = 1.6;
+        this.isAutoZooming = false; // Flag for smooth auto-zoom
         
         // UI elements
         this.overlay = document.getElementById('overlay');
@@ -50,13 +52,16 @@ class OptimizedPortfolio3DRenderer {
         this.fpsElement = document.getElementById('fps');
         this.overlayVisible = false;
         
-        // Mobile controls
+        // Device detection
         this.isMobile = this.detectMobile();
+        this.isTablet = this.detectTablet();
+        this.deviceType = this.getDeviceType();
+        
+        // Mobile controls
         this.mobileControls = document.getElementById('mobileControls');
         this.joystickContainer = document.getElementById('joystickContainer');
         this.joystickHandle = document.getElementById('joystickHandle');
-        this.zoomInBtn = document.getElementById('zoomInBtn');
-        this.zoomOutBtn = document.getElementById('zoomOutBtn');
+        this.clickMeBtn = document.getElementById('clickMeBtn');
         this.joystickActive = false;
         this.joystickCenter = { x: 0, y: 0 };
         this.joystickRadius = 40; // Max distance from center
@@ -91,8 +96,26 @@ class OptimizedPortfolio3DRenderer {
      * Detect if device is mobile for conditional features
      */
     detectMobile() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-               (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+        return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               (window.innerWidth <= 768);
+    }
+    
+    /**
+     * Detect if device is tablet
+     */
+    detectTablet() {
+        return /iPad|Android/i.test(navigator.userAgent) && 
+               window.innerWidth > 768 && 
+               window.innerWidth <= 1024;
+    }
+    
+    /**
+     * Get device type
+     */
+    getDeviceType() {
+        if (this.isMobile) return 'mobile';
+        if (this.isTablet) return 'tablet';
+        return 'desktop';
     }
     
     /**
@@ -165,7 +188,18 @@ class OptimizedPortfolio3DRenderer {
             0.1, 
             100 // Reduced far plane for better performance
         );
-        this.camera.position.set(0, 0, 6);
+        
+        // Responsive camera position based on device type
+        const getCameraDistance = () => {
+            switch (this.deviceType) {
+                case 'mobile': return 4;
+                case 'tablet': return 5; // Original tablet distance
+                case 'desktop': return 3; // Closer for larger text
+                default: return 5;
+            }
+        };
+        
+        this.camera.position.set(0, 0, getCameraDistance());
     }
     
     /**
@@ -292,14 +326,17 @@ class OptimizedPortfolio3DRenderer {
         fontLoader.load(
             'https://threejs.org/examples/fonts/gentilis_bold.typeface.json',
             (font) => {
-                console.log('Font loaded');
+                console.log('Font loaded successfully');
                 this.createTextGeometry(font);
             },
             (progress) => {
-                console.log('Font loading:', Math.round(progress.loaded / progress.total * 100) + '%');
+                if (progress.total > 0) {
+                    console.log('Font loading progress:', Math.round(progress.loaded / progress.total * 100) + '%');
+                }
             },
             (error) => {
-                console.error('Font error:', error);
+                console.error('Font loading error:', error);
+                console.log('Creating fallback text geometry');
                 this.createFallbackText();
             }
         );
@@ -309,14 +346,26 @@ class OptimizedPortfolio3DRenderer {
      * Create optimized 3D text geometry
      */
     createTextGeometry(font) {
+        // Responsive text size based on device type
+        const getTextSize = () => {
+            switch (this.deviceType) {
+                case 'mobile': return 1.2;
+                case 'tablet': return 1.5; // Original tablet size
+                case 'desktop': return 2.0; // Larger for desktop
+                default: return 1.5;
+            }
+        };
+        
+        const textSize = getTextSize();
+        
         const textGeometry = new THREE.TextGeometry('Evanolott', {
             font: font,
-            size: 1.0,
-            height: 0.2,
+            size: textSize,
+            height: textSize * 0.15,
             curveSegments: 12, // Reduced for better performance
             bevelEnabled: true,
-            bevelThickness: 0.03,
-            bevelSize: 0.015,
+            bevelThickness: textSize * 0.025,
+            bevelSize: textSize * 0.01,
             bevelSegments: 8 // Reduced for better performance
         });
         
@@ -332,15 +381,20 @@ class OptimizedPortfolio3DRenderer {
             roughness: 0.05
         });
         
+        // Create outline effect instead of wireframe
+        const outlineGeometry = textGeometry.clone();
+        outlineGeometry.scale(1.02, 1.02, 1.02); // Slightly larger for outline
+        
         const wireframeMaterial = new THREE.MeshBasicMaterial({
             color: 0xffffff,
-            wireframe: true
+            side: THREE.BackSide // Only show back faces for outline effect
         });
         
         this.textMesh = new THREE.Mesh(textGeometry, metallicMaterial);
         this.scene.add(this.textMesh);
         
-        this.wireframeTextMesh = new THREE.Mesh(textGeometry.clone(), wireframeMaterial);
+        // Create outline mesh instead of wireframe
+        this.wireframeTextMesh = new THREE.Mesh(outlineGeometry, wireframeMaterial);
         this.wireframeScene.add(this.wireframeTextMesh);
         
         console.log('Optimized 3D text created');
@@ -350,7 +404,18 @@ class OptimizedPortfolio3DRenderer {
      * Create fallback geometry
      */
     createFallbackText() {
-        const geometry = new THREE.BoxGeometry(3.5, 0.8, 0.4);
+        // Responsive fallback geometry size based on device type
+        const getFallbackSize = () => {
+            switch (this.deviceType) {
+                case 'mobile': return { width: 3.5, height: 0.8, depth: 0.4 };
+                case 'tablet': return { width: 4.5, height: 1.0, depth: 0.5 };
+                case 'desktop': return { width: 6.0, height: 1.2, depth: 0.6 };
+                default: return { width: 4.5, height: 1.0, depth: 0.5 };
+            }
+        };
+        
+        const size = getFallbackSize();
+        const geometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
         const material = new THREE.MeshStandardMaterial({
             color: 0xf0f0f0,
             metalness: 0.9,
@@ -360,11 +425,15 @@ class OptimizedPortfolio3DRenderer {
         this.textMesh = new THREE.Mesh(geometry, material);
         this.scene.add(this.textMesh);
         
+        // Create outline effect for fallback geometry
+        const outlineGeometry = geometry.clone();
+        outlineGeometry.scale(1.02, 1.02, 1.02);
+        
         const wireframeMaterial = new THREE.MeshBasicMaterial({
             color: 0xffffff,
-            wireframe: true
+            side: THREE.BackSide
         });
-        this.wireframeTextMesh = new THREE.Mesh(geometry.clone(), wireframeMaterial);
+        this.wireframeTextMesh = new THREE.Mesh(outlineGeometry, wireframeMaterial);
         this.wireframeScene.add(this.wireframeTextMesh);
         
         console.log('Using fallback geometry');
@@ -390,11 +459,35 @@ class OptimizedPortfolio3DRenderer {
         this.joystickContainer.addEventListener('touchmove', this.handleJoystickMove.bind(this), { passive: false });
         this.joystickContainer.addEventListener('touchend', this.handleJoystickEnd.bind(this), { passive: false });
         
-        // Zoom controls
-        this.zoomInBtn.addEventListener('touchstart', () => this.handleZoom(0.1), { passive: true });
-        this.zoomOutBtn.addEventListener('touchstart', () => this.handleZoom(-0.1), { passive: true });
+        // Single "Click Me" button for auto-zoom
+        this.clickMeBtn.addEventListener('touchstart', this.handleAutoZoom.bind(this), { passive: true });
+        this.clickMeBtn.addEventListener('click', this.handleAutoZoom.bind(this), { passive: true });
         
         console.log('Mobile virtual joystick controls enabled');
+    }
+    
+    /**
+     * Handle auto-zoom to reveal overlay
+     */
+    handleAutoZoom() {
+        if (this.isAutoZooming) return;
+        
+        this.isAutoZooming = true;
+        this.clickMeBtn.style.opacity = '0.5';
+        this.clickMeBtn.style.transform = 'scale(0.95)';
+        
+        // Smooth zoom to threshold
+        const targetZoom = this.zoomThreshold + 0.1;
+        this.targetScale = targetZoom;
+        
+        // Reset button after animation
+        setTimeout(() => {
+            this.isAutoZooming = false;
+            this.clickMeBtn.style.opacity = '1';
+            this.clickMeBtn.style.transform = 'scale(1)';
+        }, 1000);
+        
+        console.log('Auto-zoom initiated');
     }
     
     /**
@@ -463,14 +556,6 @@ class OptimizedPortfolio3DRenderer {
         
         this.targetRotation.y = normalizedX * this.maxRotationY;
         this.targetRotation.x = -normalizedY * this.maxRotationX * 0.6; // Inverted Y
-    }
-    
-    /**
-     * Handle zoom controls
-     */
-    handleZoom(delta) {
-        this.targetScale += delta;
-        this.targetScale = Math.max(this.minScale, Math.min(this.maxScale, this.targetScale));
     }
     
     /**
@@ -634,30 +719,36 @@ class OptimizedPortfolio3DRenderer {
      * Handle window resize with optimization
      */
     onWindowResize() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        
-        this.camera.aspect = width / height;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(width, height);
-        
-        this.mainRenderTarget.setSize(width, height);
-        this.wireframeRenderTarget.setSize(width, height);
-        
-        if (this.lensUniforms) {
-            this.lensUniforms.uResolution.value.set(width, height);
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
         }
         
-        // Update joystick center on mobile
-        if (this.isMobile && this.joystickContainer) {
-            const rect = this.joystickContainer.getBoundingClientRect();
-            this.joystickCenter = {
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
-            };
-        }
-        
-        console.log('Resized to', width, 'x', height);
+        this.resizeTimeout = setTimeout(() => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(width, height);
+            
+            this.mainRenderTarget.setSize(width, height);
+            this.wireframeRenderTarget.setSize(width, height);
+            
+            if (this.lensUniforms) {
+                this.lensUniforms.uResolution.value.set(width, height);
+            }
+            
+            // Update joystick center on mobile
+            if (this.isMobile && this.joystickContainer) {
+                const rect = this.joystickContainer.getBoundingClientRect();
+                this.joystickCenter = {
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + rect.height / 2
+                };
+            }
+            
+            // console.log('Resized to', width, 'x', height); // Commented out to reduce log spam
+        }, 100); // Throttle resize events
     }
     
     /**
@@ -726,6 +817,10 @@ class OptimizedPortfolio3DRenderer {
      * Optimized multi-pass rendering
      */
     render() {
+        if (!this.textMesh || !this.wireframeTextMesh) {
+            return;
+        }
+        
         // Pass 1: Render main metallic scene
         this.renderer.setRenderTarget(this.mainRenderTarget);
         this.renderer.render(this.scene, this.camera);
@@ -762,16 +857,44 @@ class OptimizedPortfolio3DRenderer {
 }
 
 /**
- * Initialize when DOM is ready
+ * Initialize immediately when script loads (since it's loaded after DOM is ready)
  */
-document.addEventListener('DOMContentLoaded', () => {
+function initializePortfolio() {
     console.log('Starting Optimized Eva Qi Professional 3D Portfolio');
+    
+    // Check if Three.js is loaded
+    if (typeof THREE === 'undefined') {
+        console.error('Three.js is not loaded. Waiting for it...');
+        // Wait a bit and try again
+        setTimeout(() => {
+            if (typeof THREE !== 'undefined') {
+                console.log('Three.js loaded, initializing portfolio...');
+                try {
+                    new OptimizedPortfolio3DRenderer();
+                } catch (error) {
+                    console.error('Critical initialization error:', error);
+                }
+            } else {
+                console.error('Three.js failed to load');
+            }
+        }, 1000);
+        return;
+    }
+    
     try {
         new OptimizedPortfolio3DRenderer();
     } catch (error) {
         console.error('Critical initialization error:', error);
     }
-});
+}
+
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePortfolio);
+} else {
+    // DOM is already loaded, initialize immediately
+    initializePortfolio();
+}
 
 /**
  * Global error handler

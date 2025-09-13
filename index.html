@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Eva Qi (Evanolott) - Professional portfolio showcasing expertise in development, quantitative research, art, education, entrepreneurship, and wine.">
-    <meta name="keywords" content="Eva Qi, Evanolott, developer, quantitative researcher, artist, educator, entrepreneur, wine connoisseur">
-    <meta name="author" content="Eva Qi">
-    <meta property="og:title" content="Evanolott - Eva Qi Portfolio">
+    <meta name="description" content="Evanolott - Professional portfolio showcasing expertise in development, quantitative research, art, education, entrepreneurship, and wine.">
+    <meta name="keywords" content="Evanolott, developer, quantitative researcher, artist, educator, entrepreneur, wine connoisseur">
+    <meta name="author" content="Evanolott">
+    <meta property="og:title" content="Evanolott - Professional Portfolio">
     <meta property="og:description" content="Professional portfolio showcasing diverse expertise across technology, research, arts, and business.">
     <meta property="og:type" content="website">
     <title>Evanolott</title>
@@ -20,10 +20,44 @@
     <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Evanolott</a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="portfolio.html" class="nav-link">Portfolio</a>
+                <a href="journey.html" class="nav-link">Journey</a>
+                <a href="about.html" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobile-sidebar">
+        <div class="sidebar-header">
+            <h2>Evanolott</h2>
+            <button class="close-sidebar" id="close-sidebar">&times;</button>
+        </div>
+        <div class="sidebar-menu">
+            <a href="index.html" class="sidebar-link active">Home</a>
+            <a href="portfolio.html" class="sidebar-link">Portfolio</a>
+            <a href="journey.html" class="sidebar-link">Journey</a>
+            <a href="about.html" class="sidebar-link">Contact</a>
+            <a href="resume.html" class="sidebar-link">Resume</a>
+            <a href="projects.html" class="sidebar-link">Projects</a>
+        </div>
+    </div>
+
     <!-- Info Panel -->
     <div id="info">
         🎯 <strong>Professional 3D Text Lens</strong><br>
-        🔍 Move cursor to rotate text + explore lens<br>
+        📱 Move cursor to rotate text + explore lens<br>
         📈 Scroll up/in to zoom & reveal introduction<br>
         🔮 Outside: Silver metallic "Evanolott"<br>
         💗 Inside lens: Pink gradient + white wireframe<br>
@@ -46,9 +80,9 @@
             </div>
         </div>
         
-        <div class="zoom-controls">
-            <button class="zoom-btn" id="zoomInBtn">+</button>
-            <button class="zoom-btn" id="zoomOutBtn">−</button>
+        <!-- Single Click Me Button -->
+        <div class="click-me-controls">
+            <button class="click-me-btn" id="clickMeBtn">Click Me</button>
         </div>
     </div>
     
@@ -59,10 +93,18 @@
             <!-- TEXT CONTAINER -->
             <div class="intro-text-container">
                 <div class="intro-text intro-line-1">Hi There! 👋</div>
-                <div class="intro-text intro-line-2">I'M EVA QI</div>
+                <div class="intro-text intro-line-2">I'M EVANOLOTT</div>
                 <div class="intro-text intro-line-3">And I'm a</div>
                 <div class="intro-text dynamic-role">
                     <span class="role-text role-developer">Developer</span>
+                </div>
+                
+                <!-- CTA BUTTON - POSITIONED UNDER INTRODUCTION -->
+                <div class="cta-centered">
+                    <a href="./portfolio.html" class="cta-button">
+                        <span>Explore My Work</span>
+                        <span class="cta-arrow">→</span>
+                    </a>
                 </div>
             </div>
             
@@ -168,14 +210,6 @@
                 </svg>
             </div>
         </div>
-        
-        <!-- CTA BUTTON - FIXED POSITIONING -->
-        <div class="cta-centered">
-            <a href="#about" class="cta-button">
-                <span>Explore My Work</span>
-                <span class="cta-arrow">→</span>
-            </a>
-        </div>
     </div>
     
     <!-- Tutorial Hint -->
@@ -183,9 +217,9 @@
         scroll up/zoom in to meet Eva
     </div>
     
-    <!-- Three.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Main JavaScript -->
-    <script src="src/js/main.js"></script>
+    <!-- Device Detection & Smart Loading -->
+    <script src="src/js/device-detector.js"></script>
+    <!-- Navigation System -->
+    <script src="src/js/navigation.js"></script>
 </body>
 </html>

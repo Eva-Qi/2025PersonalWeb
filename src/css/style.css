@@ -502,15 +502,7 @@ body:not(.has-navbar) .navbar {
     .click-me-btn {
         border: 2px solid #ffffff;
     }
-} blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: opacity 0.3s ease;
-    /* Prevent text selection */
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
+} 
 
 #fps {
     position: absolute;
@@ -968,12 +960,11 @@ body:not(.has-navbar) .navbar {
         transform: translateX(-50%) translateY(0);
     }
 }
-
 /* ===================================
    TUTORIAL HINT
    =================================== */
 
-#timed-hint {
+   #timed-hint {
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -990,4 +981,11 @@ body:not(.has-navbar) .navbar {
     background: rgba(0, 0, 0, 0.4);
     padding: 8px 16px;
     border-radius: 20px;
-    backdrop-filter:
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#timed-hint.show {
+    opacity: 1;
+    visibility: visible;
+}

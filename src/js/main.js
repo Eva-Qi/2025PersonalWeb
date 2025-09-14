@@ -692,7 +692,6 @@ class OptimizedPortfolio3DRenderer {
         
         if (shouldShowOverlay && !this.overlayVisible) {
             this.overlay.classList.add('active');
-            this.info.style.opacity = '0.3';
             this.fpsElement.style.opacity = '0.3';
             this.overlayVisible = true;
             this.hasSeenIntro = true;
@@ -708,7 +707,6 @@ class OptimizedPortfolio3DRenderer {
             console.log('Introduction revealed');
         } else if (!shouldShowOverlay && this.overlayVisible) {
             this.overlay.classList.remove('active');
-            this.info.style.opacity = '0.8';
             this.fpsElement.style.opacity = '0.7';
             this.overlayVisible = false;
             this.isTyping = false;

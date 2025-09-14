@@ -40,7 +40,6 @@ class MobilePortfolio3DRenderer {
         // UI elements
         this.overlay = document.getElementById('overlay');
         this.timedHint = document.getElementById('timed-hint');
-        this.info = document.getElementById('info');
         this.fpsElement = document.getElementById('fps');
         this.overlayVisible = false;
         
@@ -478,7 +477,6 @@ class MobilePortfolio3DRenderer {
         
         if (shouldShowOverlay && !this.overlayVisible) {
             this.overlay.classList.add('active');
-            this.info.style.opacity = '0.3';
             this.fpsElement.style.opacity = '0.3';
             this.overlayVisible = true;
             this.hasSeenIntro = true;
@@ -490,7 +488,6 @@ class MobilePortfolio3DRenderer {
             console.log('Mobile introduction revealed');
         } else if (!shouldShowOverlay && this.overlayVisible) {
             this.overlay.classList.remove('active');
-            this.info.style.opacity = '0.8';
             this.fpsElement.style.opacity = '0.7';
             this.overlayVisible = false;
             this.isTyping = false;

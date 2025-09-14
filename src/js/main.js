@@ -192,10 +192,10 @@ class OptimizedPortfolio3DRenderer {
         // Responsive camera position based on device type
         const getCameraDistance = () => {
             switch (this.deviceType) {
-                case 'mobile': return 4;
-                case 'tablet': return 5; // Original tablet distance
-                case 'desktop': return 3; // Closer for larger text
-                default: return 5;
+                case 'mobile': return 6;
+                case 'tablet': return 7; // Original tablet distance
+                case 'desktop': return 8; // Closer for larger text
+                default: return 7;
             }
         };
         
@@ -349,10 +349,10 @@ class OptimizedPortfolio3DRenderer {
         // Responsive text size based on device type
         const getTextSize = () => {
             switch (this.deviceType) {
-                case 'mobile': return 1.2;
-                case 'tablet': return 1.5; // Original tablet size
-                case 'desktop': return 2.0; // Larger for desktop
-                default: return 1.5;
+                case 'mobile': return 0.8;
+                case 'tablet': return 1.0; // Original tablet size
+                case 'desktop': return 1.2; // Larger for desktop
+                default: return 1.0;
             }
         };
         

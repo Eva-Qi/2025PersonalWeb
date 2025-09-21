@@ -49,7 +49,7 @@ class JourneyTimeline {
                 description: 'Led development of innovative web applications while conducting quantitative research. Created immersive 3D web experiences and interactive portfolios.',
                 tags: ['Full-Stack', '3D Web', 'WebGL', 'Interactive Design'],
                 side: 'right',
-                position: '0.4'
+                position: 0.4
             },
             {
                 year: '2022',

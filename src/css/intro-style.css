@@ -1,6 +1,6 @@
 /* ===================================
-   完全重构的响应式布局 - 移动优先方法
-   解决所有布局问题
+   INTRO PAGE STYLES
+   Eva Qi Personal Website - Intro Page
    =================================== */
 
 /* CSS Custom Properties */
@@ -77,6 +77,10 @@ body {
     opacity: 1;
     visibility: visible;
 }
+
+/* ===================================
+   DEBUG MODE STYLES
+   =================================== */
 
 .debug-mode .main-content {
     border: 3px solid #ff0000 !important; /* Red for main container */
@@ -349,7 +353,7 @@ body {
 /* ===================================
    TABLET LAYOUT (769px - 1024px)
    =================================== */
-   @media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1024px) {
     .main-content {
         /* Golden ratio container for tablets */
         width: min(90vw, 800px);
@@ -419,7 +423,7 @@ body {
 /* ===================================
    DESKTOP LAYOUT (1025px+)
    =================================== */
-   @media (min-width: 1025px) {
+@media (min-width: 1025px) {
     .main-content {
         /* Golden ratio container for desktop */
         width: min(85vw, 900px);
@@ -605,300 +609,6 @@ body {
 }
 
 /* ===================================
-   更小的移动设备优化
-   =================================== */
-
-@media (max-width: 480px) {
-    .main-content {
-        gap: clamp(12px, 2.5vh, 20px);
-        padding: 15px;
-        padding-bottom: 70px;
-        min-height: 70vh;
-    }
-    
-    .avatar-container {
-        width: clamp(90px, 30vw, 130px);
-        height: clamp(90px, 30vw, 130px);
-    }
-    
-    .dynamic-role {
-        font-size: clamp(1rem, 4vw, 1.5rem);
-        min-height: clamp(35px, 5vh, 45px);
-    }
-    
-    .cta-button {
-        font-size: clamp(0.75rem, 3vw, 0.9rem);
-        padding: clamp(8px, 1.8vw, 10px) clamp(14px, 2.8vw, 20px);
-    }
-    
-    .joystick-container {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .joystick-handle {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .click-me-btn {
-        font-size: 14px;
-        padding: 10px 20px;
-        min-width: 100px;
-    }
-}
-
-@media (max-width: 320px) {
-    .main-content {
-        gap: clamp(10px, 2vh, 15px);
-        padding: 12px;
-        padding-bottom: 60px;
-        min-height: 65vh;
-    }
-    
-    .avatar-container {
-        width: clamp(80px, 35vw, 110px);
-        height: clamp(80px, 35vw, 110px);
-    }
-    
-    .dynamic-role {
-        font-size: clamp(0.9rem, 3.5vw, 1.3rem);
-        min-height: clamp(30px, 4vh, 40px);
-    }
-    
-    .click-me-btn {
-        font-size: 12px;
-        padding: 8px 16px;
-        min-width: 80px;
-    }
-}
-
-/* ===================================
-   导航栏样式（保持不变）
-   =================================== */
-
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: rgba(26, 26, 46, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    transform: translateY(0);
-}
-
-body:not(.has-navbar) .navbar {
-    display: none;
-}
-
-.navbar.scrolled {
-    background: rgba(26, 26, 46, 0.98);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 70px;
-}
-
-.logo {
-    font-family: 'Scheherazade New', 'Times New Roman', serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    background: linear-gradient(45deg, #f093fb, #f5576c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.logo:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 40px;
-}
-
-.nav-link {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    position: relative;
-    transition: all 0.3s ease;
-    padding: 8px 0;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(45deg, #f093fb, #f5576c);
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after,
-.nav-link.active::after {
-    width: 100%;
-}
-
-.nav-link:hover {
-    color: #f093fb;
-    transform: translateY(-2px);
-}
-
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    padding: 5px;
-    transition: all 0.3s ease;
-}
-
-.hamburger.active {
-    transform: rotate(90deg);
-}
-
-.bar {
-    width: 25px;
-    height: 3px;
-    background: linear-gradient(45deg, #f093fb, #f5576c);
-    margin: 3px 0;
-    transition: all 0.3s ease;
-    border-radius: 2px;
-}
-
-.hamburger.active .bar:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.active .bar:nth-child(2) {
-    opacity: 0;
-}
-
-.hamburger.active .bar:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
-}
-
-/* ===================================
-   MOBILE SIDEBAR
-   =================================== */
-
-.mobile-sidebar {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 85%;
-    max-width: 400px;
-    height: 100vh;
-    background: rgba(26, 26, 46, 0.98);
-    backdrop-filter: blur(20px);
-    z-index: 2000;
-    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    overflow-y: auto;
-}
-
-.mobile-sidebar.active {
-    right: 0;
-}
-
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-header h2 {
-    font-family: 'Scheherazade New', 'Times New Roman', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(45deg, #f093fb, #f5576c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.close-sidebar {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 2rem;
-    cursor: pointer;
-    padding: 5px;
-    transition: all 0.3s ease;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.close-sidebar:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: rotate(90deg);
-}
-
-.sidebar-menu {
-    padding: 20px 0;
-}
-
-.sidebar-link {
-    display: block;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 500;
-    padding: 15px 30px;
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
-    position: relative;
-}
-
-.sidebar-link:hover,
-.sidebar-link.active {
-    background: rgba(240, 147, 251, 0.1);
-    border-left-color: #f093fb;
-    color: #f093fb;
-    transform: translateX(10px);
-}
-
-.sidebar-link::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0;
-    background: linear-gradient(45deg, #f093fb, #f5576c);
-    transition: width 0.3s ease;
-    opacity: 0.1;
-}
-
-.sidebar-link:hover::before {
-    width: 100%;
-}
-
-/* ===================================
    TUTORIAL HINT
    =================================== */
 
@@ -928,54 +638,47 @@ body:not(.has-navbar) .navbar {
     visibility: visible;
 }
 
-
 /* ===================================
    MOBILE LAYOUT - UPDATED WITH FIXES
    =================================== */
 
 /* Tablets and mobile landscape */
 @media (max-width: 768px) {
-    /* Navigation responsive */
-    .nav-menu {
-        display: none;
-    }
-    
-    .hamburger {
-        display: flex;
-    }
-    
-    .navbar {
-        height: 60px;
-    }
-    
-    .nav-container {
-        height: 60px;
-    }
-    
-    .logo {
-        font-size: 1.5rem;
-    }
-    
+    /* Override overlay for better mobile centering */
     #overlay {
         padding: clamp(15px, 3vw, 25px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    /* Reset main content positioning for mobile - vertical layout */
+    /* MAIN CONTENT CONTAINER - FIXED DIMENSIONS */
+    /* Use higher specificity to override previous rules without !important */
     .main-content {
+        /* FIXED: Main container should be 70% width, 75% height, centered */
+        width: 70vw;
+        height: 75vh;
+        max-width: none; /* Remove conflicting max-width */
+        min-height: auto; /* Remove conflicting min-height */
+        
+        /* Perfect centering */
+        margin: 0 auto;
+        
+        /* Keep flex layout for mobile */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        max-width: 90vw;
-        gap: clamp(15px, 2.5vh, 20px); /* Reduced gap between elements */
+        
+        /* Spacing between elements */
+        gap: clamp(15px, 2.5vh, 20px);
+        
+        /* Styling */
         text-align: center;
-        margin: 0 auto;
         padding: 20px;
-        height: auto;
-        min-height: 75vh;
         position: relative;
-        /* Remove any inherited positioning */
+        
+        /* Remove any transforms that might affect centering */
         transform: none;
         top: auto;
         left: auto;
@@ -983,17 +686,16 @@ body:not(.has-navbar) .navbar {
         bottom: auto;
     }
     
-    /* Avatar container - slightly bigger, proper order */
+    /* AVATAR CONTAINER - Keep current size */
     .avatar-container {
         order: 1;
-        width: clamp(120px, 28vw, 160px); /* Slightly bigger */
-        height: clamp(120px, 28vw, 160px); /* Slightly bigger */
+        width: clamp(120px, 28vw, 160px);
+        height: clamp(120px, 28vw, 160px);
         flex-shrink: 0;
         margin: 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        /* Reset any inherited positioning */
         position: relative;
         transform: none;
         top: auto;
@@ -1002,11 +704,15 @@ body:not(.has-navbar) .navbar {
         bottom: auto;
     }
     
-    .intro-text-container {
+    /* INTRO TEXT CONTAINER - FIXED TO MATCH MAIN CONTENT WIDTH */
+    #overlay .main-content .intro-text-container {
         order: 2;
-        width: auto; /* Let content determine width */
-        max-width: 85vw; /* Prevent overflow but allow natural sizing */
-        height: auto; /* Let content determine height */
+        
+        /* FIXED: Should match main content width exactly */
+        width: 100%; /* Take full width of main-content (which is 70vw) */
+        max-width: none; /* Remove conflicting max-width */
+        height: auto;
+        
         text-align: center;
         margin: 0;
         padding: 0;
@@ -1014,54 +720,79 @@ body:not(.has-navbar) .navbar {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: clamp(2px, 0.5vh, 4px); /* Tight spacing between text lines */
-        /* Reset any inherited positioning */
+        gap: clamp(2px, 0.5vh, 4px);
+        
+        /* Reset positioning */
         position: relative;
         transform: none;
         top: auto;
         left: auto;
         right: auto;
         bottom: auto;
-        flex: none; /* Don't grow to fill space */
+        flex: none;
     }
     
+    /* DYNAMIC ROLE - BIGGER FONTS FOR INTERACTIVE TITLES - FIXED VERSION */
     .dynamic-role {
         justify-content: center;
-        margin-bottom: clamp(2px, 0.5vh, 4px); /* Reduced margin */
-        /* Responsive mobile role fonts - smaller for long text */
-        font-size: clamp(1.1rem, 4.5vw, 1.8rem);
-        min-height: clamp(40px, 6vh, 50px);
-        white-space: nowrap; /* Prevent text wrapping */
-        overflow: hidden; /* Hide overflow if text is too long */
-        text-overflow: ellipsis; /* Add ellipsis if needed */
-        width: 100%; /* Take full width */
-        text-align: center; /* Center the text */
+        margin-bottom: clamp(2px, 0.5vh, 4px);
+        font-size: clamp(1.4rem, 6vw, 2.4rem) !important; /* FORCE override base styles */
+        min-height: clamp(45px, 7vh, 60px); /* Increased height to accommodate larger text */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        text-align: center;
+        /* Override other base properties that might conflict */
+        font-weight: 700;
+        letter-spacing: clamp(0.5px, 0.1vw, 1px);
     }
     
-    /* Mobile CTA positioning - Move outside text container using absolute positioning */
+    /* Also target the role-text element inside for double coverage */
+    .role-text {
+        font-size: clamp(1.4rem, 6vw, 2.4rem) !important;
+        font-weight: 700;
+    }
+    
+    /* Enhanced "I'M EVANOLOTT" with important to ensure it works */
+    .intro-line-2 {
+        font-size: clamp(1.6rem, 6vw, 2.2rem) !important; /* FORCE override */
+        font-weight: 700;
+        letter-spacing: clamp(0.5px, 0.1vw, 1px);
+    }
+    
+    /* CTA CONTAINER - FIXED TO BE SMALLER */
     .cta-centered {
         order: 3;
-        position: relative !important; /* Change from absolute to relative */
-        transform: translateY(30px) !important; /* Only vertical transform */
+        
+        /* FIXED: Should be auto width, not 100% */
+        width: auto; /* Let button content determine width */
+        
+        /* Positioning */
+        position: relative;
+        transform: translateY(30px);
         opacity: 0;
         transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         transition-delay: 1.2s;
-        width: 100% !important; /* Full width container */
-        text-align: center !important;
+        
+        /* Centering */
+        text-align: center;
         z-index: 10;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        /* Spacing */
         margin-top: clamp(15px, 3vh, 25px);
+        
         /* Remove absolute positioning properties */
-        top: auto !important;
-        right: auto !important;
-        left: auto !important;
-        bottom: auto !important;
+        top: auto;
+        right: auto;
+        left: auto;
+        bottom: auto;
     }
     
-    
-    /* Mobile CTA button size - keep original size for mobile */
+    /* CTA BUTTON - Keep current size but ensure it's not stretched */
     .cta-button {
         font-size: clamp(0.8rem, 3.5vw, 1rem);
         padding: clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px);
@@ -1069,23 +800,31 @@ body:not(.has-navbar) .navbar {
         border-radius: 50px;
         box-shadow: 0 6px 20px rgba(240, 147, 251, 0.3);
         letter-spacing: 0.5px;
+        
+        /* Ensure button doesn't stretch */
+        width: auto;
+        min-width: auto;
+        flex-shrink: 0;
     }
     
-    /* KEEP ORIGINAL MOBILE TEXT SIZES */
+    /* ENHANCED MOBILE TEXT SIZES - BIGGER FONTS WITH FORCED OVERRIDES */
     .intro-line-1 {
-        font-size: clamp(1.4rem, 5vw, 1.8rem);
+        font-size: clamp(1.4rem, 5vw, 1.8rem); /* Keep "Hi There!" same size */
     }
     
     .intro-line-2 {
-        font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+        font-size: clamp(1.6rem, 6vw, 2.2rem) !important; /* FORCE: "I'M EVANOLOTT" */
+        font-weight: 700;
+        letter-spacing: clamp(0.5px, 0.1vw, 1px);
     }
     
     .intro-line-3 {
-        font-size: clamp(1rem, 4vw, 1.3rem);
+        font-size: clamp(1rem, 4vw, 1.3rem); /* Keep "And I'm a" same size */
     }
     
-    #overlay.active .cta-centered {
-        transform: translateY(0); /* Matches reduced mobile animation */
+    /* Animation fix */
+    .cta-centered {
+        transform: translateY(0);
     }
     
     /* Show mobile controls */
@@ -1130,7 +869,6 @@ body:not(.has-navbar) .navbar {
         padding: clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px);
     }
     
-    
     .joystick-container {
         width: 100px;
         height: 100px;
@@ -1150,37 +888,27 @@ body:not(.has-navbar) .navbar {
 
 /* Extra small devices */
 @media (max-width: 320px) {
-    .main-content {
-        display: flex !important; /* Force flex display */
-        flex-direction: column !important; /* Force vertical layout */
-        gap: clamp(12px, 2.5vh, 20px);
-        padding-bottom: 70px; /* Even less space for tiny screens */
-        overflow: visible; /* Allow content to be visible */
-        height: auto; /* Auto height */
-        min-height: 70vh; /* Even smaller min height for tiny screens */
-        margin: 0 auto; /* Center the container */
+    #overlay .main-content {
+        width: 80vw; /* Even larger percentage for tiny screens */
+        height: 75vh;
+        gap: clamp(10px, 1.5vh, 15px);
+        padding: 12px;
     }
     
-    .avatar-container {
+    #overlay .main-content .avatar-container {
         width: clamp(90px, 35vw, 120px);
         height: clamp(90px, 35vw, 120px);
     }
     
-    .dynamic-role {
-        font-size: clamp(0.9rem, 3.5vw, 1.4rem); /* Even smaller font for tiny screens */
+    #overlay .main-content .intro-text-container .dynamic-role {
+        font-size: clamp(1rem, 4.5vw, 1.8rem); /* Adjusted for extra small screens */
     }
     
-    .cta-centered {
-        margin-top: clamp(12px, 2.5vh, 20px);
-    }
-    
-    .click-me-btn {
-        font-size: 12px;
-        padding: 8px 16px;
-        min-width: 80px;
+    #overlay .main-content .cta-centered .cta-button {
+        font-size: clamp(0.7rem, 3vw, 0.9rem);
+        padding: clamp(6px, 1.5vw, 10px) clamp(12px, 2.5vw, 20px);
     }
 }
-
 /* ===================================
    ACCESSIBILITY IMPROVEMENTS
    =================================== */
@@ -1232,95 +960,4 @@ body:not(.has-navbar) .navbar {
     .click-me-btn {
         border: 2px solid #ffffff;
     }
-} 
-
-
-
-/* ===================================
-   SINGLE CLICK ME BUTTON
-   =================================== */
-
-.click-me-controls {
-    display: flex;
-    justify-content: center;
-    flex-shrink: 0;
 }
-
-.click-me-btn {
-    padding: 12px 24px;
-    background: linear-gradient(45deg, #f093fb, #f5576c);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 25px;
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 600;
-    font-family: 'Scheherazade New', 'Times New Roman', serif;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.3);
-    cursor: pointer;
-    min-width: 120px;
-}
-
-.click-me-btn:hover, .click-me-btn:active {
-    background: linear-gradient(45deg, #f5576c, #f093fb);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
-}
-
-.click-me-btn:active {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.5);
-}
-
-
-
-
-
-
-
-
-
-.profile-svg {
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 clamp(6px, 1.5vw, 12px) clamp(12px, 2.5vw, 20px) rgba(0, 0, 0, 0.3)) 
-            invert(1) 
-            sepia(1) 
-            saturate(2) 
-            hue-rotate(320deg) 
-            brightness(1.2);
-    animation: professionalFloat 8s ease-in-out infinite;
-    /* Prevent text selection */
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    object-fit: contain; /* 新增：确保SVG正确缩放 */
-}
-
-@keyframes professionalFloat {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-    }
-    33% { 
-        transform: translateY(-4px) rotate(0.5deg); 
-    }
-    66% { 
-        transform: translateY(-2px) rotate(-0.5deg); 
-    }
-}
-
-
-
-

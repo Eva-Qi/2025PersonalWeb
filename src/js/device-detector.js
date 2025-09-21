@@ -70,10 +70,12 @@ class DeviceDetector {
         
         if (this.deviceType === 'desktop') {
             // Desktop-specific preloads
-            this.preloadStylesheet('src/css/style.css');
+            this.preloadStylesheet('src/css/intro-style.css');
+            this.preloadStylesheet('src/css/main-style.css');
         } else {
             // Mobile-specific optimizations
-            this.preloadStylesheet('src/css/style.css');
+            this.preloadStylesheet('src/css/intro-style.css');
+            this.preloadStylesheet('src/css/main-style.css');
         }
     }
     
@@ -223,17 +225,17 @@ class DeviceDetector {
             }
         });
         
-        // Monitor memory usage (if available)
-        if ('memory' in performance) {
+        // Monitor memory usage (if available) - only in development
+        if ('memory' in performance && window.location.hostname === 'localhost') {
             setInterval(() => {
                 const memory = performance.memory;
-                if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.8) {
+                if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.9) {
                     console.warn('High memory usage detected:', {
                         used: Math.round(memory.usedJSHeapSize / 1024 / 1024) + 'MB',
                         limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024) + 'MB'
                     });
                 }
-            }, 10000); // Check every 10 seconds
+            }, 30000); // Check every 30 seconds
         }
     }
     

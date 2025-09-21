@@ -14,9 +14,17 @@ class MobilePortfolio3DRenderer {
     constructor() {
         // Core Three.js components (simplified for mobile)
         this.scene = null;
+        this.wireframeScene = null;
         this.camera = null;
         this.renderer = null;
         this.textMesh = null;
+        this.wireframeTextMesh = null;
+        
+        // Render targets for lens effect
+        this.mainRenderTarget = null;
+        this.wireframeRenderTarget = null;
+        this.compositeQuad = null;
+        this.lensUniforms = null;
         
         // Simplified interaction system
         this.mouse = new THREE.Vector2();
@@ -40,8 +48,12 @@ class MobilePortfolio3DRenderer {
         // UI elements
         this.overlay = document.getElementById('overlay');
         this.timedHint = document.getElementById('timed-hint');
-        this.fpsElement = document.getElementById('fps');
         this.overlayVisible = false;
+        
+        // Device detection (use global device detector if available)
+        this.isMobile = window.deviceDetector ? window.deviceDetector.isMobile : true; // Always mobile for this file
+        this.isTablet = window.deviceDetector ? window.deviceDetector.isTablet : false;
+        this.deviceType = 'mobile'; // This file is mobile-specific
         
         // Mobile controls
         this.mobileControls = document.getElementById('mobileControls');
@@ -51,6 +63,15 @@ class MobilePortfolio3DRenderer {
         this.joystickActive = false;
         this.joystickCenter = { x: 0, y: 0 };
         this.joystickRadius = 40;
+        
+        // Touch tracking for proper multi-touch handling
+        this.activeJoystickTouches = new Set(); // Track which touches are controlling joystick
+        this.activePinkLightTouches = new Set(); // Track which touches are controlling pink light
+        
+        // Mouse movement tracking for render optimization
+        this.lastMouseX = 0;
+        this.lastMouseY = 0;
+        this.mouseHasMoved = false;
         
         // Role cycling system (simplified)
         this.roles = [
@@ -88,6 +109,7 @@ class MobilePortfolio3DRenderer {
             this.setupScene();
             this.setupCamera();
             this.setupLighting();
+            this.setupRenderTargets();
             this.loadFont();
             this.setupEventListeners();
             this.setupMobileControls();
@@ -129,10 +151,12 @@ class MobilePortfolio3DRenderer {
     }
     
     /**
-     * Setup simplified scene
+     * Setup scenes with wireframe support
      */
     setupScene() {
         this.scene = new THREE.Scene();
+        this.wireframeScene = new THREE.Scene();
+        this.wireframeScene.background = new THREE.Color(0x000000);
     }
     
     /**
@@ -161,6 +185,102 @@ class MobilePortfolio3DRenderer {
         this.scene.add(mainLight);
         
         console.log('Mobile lighting setup complete');
+    }
+    
+    /**
+     * Setup render targets for mobile
+     */
+    setupRenderTargets() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        const renderTargetParams = {
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            format: THREE.RGBAFormat,
+            stencilBuffer: false
+        };
+        
+        this.mainRenderTarget = new THREE.WebGLRenderTarget(width, height, renderTargetParams);
+        this.wireframeRenderTarget = new THREE.WebGLRenderTarget(width, height, renderTargetParams);
+        
+        this.createCompositeShader();
+    }
+    
+    /**
+     * Create lens effect shader for mobile
+     */
+    createCompositeShader() {
+        const geometry = new THREE.PlaneGeometry(2, 2);
+        
+        const uniforms = {
+            uMainTexture: { value: this.mainRenderTarget.texture },
+            uWireframeTexture: { value: this.wireframeRenderTarget.texture },
+            uMouse: { value: new THREE.Vector2() },
+            uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+            uLensRadius: { value: 0.15 }, // Slightly larger for mobile
+            uTime: { value: 0 }
+        };
+        
+        const vertexShader = `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `;
+        
+        const fragmentShader = `
+            uniform sampler2D uMainTexture;
+            uniform sampler2D uWireframeTexture;
+            uniform vec2 uMouse;
+            uniform vec2 uResolution;
+            uniform float uLensRadius;
+            uniform float uTime;
+            varying vec2 vUv;
+            
+            void main() {
+                vec2 uv = vUv;
+                vec2 mouseUV = uMouse * 0.5 + 0.5;
+                
+                float aspectRatio = uResolution.x / uResolution.y;
+                vec2 correctedUV = (uv - mouseUV) * vec2(aspectRatio, 1.0);
+                float distance = length(correctedUV);
+                
+                vec4 mainColor = texture2D(uMainTexture, uv);
+                vec4 wireframeColor = texture2D(uWireframeTexture, uv);
+                
+                if (distance < uLensRadius) {
+                    float normalizedDist = distance / uLensRadius;
+                    vec3 edgePink = vec3(0.94, 0.48, 0.78);
+                    vec3 centerPink = vec3(0.97, 0.85, 0.93);
+                    vec3 pinkGradient = mix(centerPink, edgePink, normalizedDist * 0.65);
+                    
+                    float wireframeBrightness = dot(wireframeColor.rgb, vec3(0.299, 0.587, 0.114));
+                    
+                    if (wireframeBrightness > 0.3) {
+                        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+                    } else {
+                        gl_FragColor = vec4(pinkGradient, 1.0);
+                    }
+                } else {
+                    gl_FragColor = mainColor;
+                }
+                
+                float edgeGlow = smoothstep(uLensRadius + 0.015, uLensRadius - 0.004, distance);
+                vec3 pinkGlow = vec3(0.9, 0.5, 0.8) * 0.35;
+                gl_FragColor.rgb += pinkGlow * edgeGlow * (1.0 - step(distance, uLensRadius));
+            }
+        `;
+        
+        const material = new THREE.ShaderMaterial({
+            uniforms,
+            vertexShader,
+            fragmentShader
+        });
+        
+        this.compositeQuad = new THREE.Mesh(geometry, material);
+        this.lensUniforms = uniforms;
     }
     
     /**
@@ -212,21 +332,19 @@ class MobilePortfolio3DRenderer {
             roughness: 0.1
         });
         
-        // Create outline effect for mobile
-        const outlineGeometry = textGeometry.clone();
-        outlineGeometry.scale(1.02, 1.02, 1.02);
-        
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
+        // Create edge outline effect using EdgeGeometry
+        const edges = new THREE.EdgesGeometry(textGeometry);
+        const wireframeMaterial = new THREE.LineBasicMaterial({
             color: 0xffffff,
-            side: THREE.BackSide
+            linewidth: 2
         });
         
         this.textMesh = new THREE.Mesh(textGeometry, material);
         this.scene.add(this.textMesh);
         
-        // Create outline mesh for mobile
-        this.wireframeTextMesh = new THREE.Mesh(outlineGeometry, wireframeMaterial);
-        this.scene.add(this.wireframeTextMesh);
+        // Create edge outline using LineSegments
+        this.wireframeTextMesh = new THREE.LineSegments(edges, wireframeMaterial);
+        this.wireframeScene.add(this.wireframeTextMesh);
         
         // Scale down for mobile to fit better on screen
         const mobileScale = 0.7; // Reduce size by 30% for mobile
@@ -247,21 +365,19 @@ class MobilePortfolio3DRenderer {
             roughness: 0.1
         });
         
-        // Create outline effect for mobile fallback
-        const outlineGeometry = geometry.clone();
-        outlineGeometry.scale(1.02, 1.02, 1.02);
-        
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
+        // Create edge outline effect for mobile fallback
+        const edges = new THREE.EdgesGeometry(geometry);
+        const wireframeMaterial = new THREE.LineBasicMaterial({
             color: 0xffffff,
-            side: THREE.BackSide
+            linewidth: 2
         });
         
         this.textMesh = new THREE.Mesh(geometry, material);
         this.scene.add(this.textMesh);
         
-        // Create outline mesh for mobile fallback
-        this.wireframeTextMesh = new THREE.Mesh(outlineGeometry, wireframeMaterial);
-        this.scene.add(this.wireframeTextMesh);
+        // Create edge outline for mobile fallback
+        this.wireframeTextMesh = new THREE.LineSegments(edges, wireframeMaterial);
+        this.wireframeScene.add(this.wireframeTextMesh);
         
         // Scale down for mobile to fit better on screen
         const mobileScale = 0.7; // Reduce size by 30% for mobile
@@ -284,14 +400,32 @@ class MobilePortfolio3DRenderer {
             y: rect.top + rect.height / 2
         };
         
-        // Joystick events
-        this.joystickContainer.addEventListener('touchstart', this.handleJoystickStart.bind(this), { passive: false });
-        this.joystickContainer.addEventListener('touchmove', this.handleJoystickMove.bind(this), { passive: false });
-        this.joystickContainer.addEventListener('touchend', this.handleJoystickEnd.bind(this), { passive: false });
+        // Joystick events - prevent event bubbling to avoid conflicts
+        this.joystickContainer.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            this.handleJoystickStart(e);
+        }, { passive: false });
         
-        // Single "Click Me" button for auto-zoom
-        this.clickMeBtn.addEventListener('touchstart', this.handleAutoZoom.bind(this), { passive: true });
-        this.clickMeBtn.addEventListener('click', this.handleAutoZoom.bind(this), { passive: true });
+        this.joystickContainer.addEventListener('touchmove', (e) => {
+            e.stopPropagation();
+            this.handleJoystickMove(e);
+        }, { passive: false });
+        
+        this.joystickContainer.addEventListener('touchend', (e) => {
+            e.stopPropagation();
+            this.handleJoystickEnd(e);
+        }, { passive: false });
+        
+        // Single "Click Me" button for auto-zoom - prevent event bubbling
+        this.clickMeBtn.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            this.handleAutoZoom(e);
+        }, { passive: true });
+        
+        this.clickMeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.handleAutoZoom(e);
+        }, { passive: true });
         
         console.log('Mobile virtual joystick controls enabled');
     }
@@ -329,6 +463,10 @@ class MobilePortfolio3DRenderer {
         this.joystickHandle.classList.add('active');
         
         const touch = event.touches[0];
+        
+        // Track this touch as controlling the joystick
+        this.activeJoystickTouches.add(touch.identifier);
+        
         this.updateJoystickPosition(touch.clientX, touch.clientY);
     }
     
@@ -350,6 +488,9 @@ class MobilePortfolio3DRenderer {
         event.preventDefault();
         this.joystickActive = false;
         this.joystickHandle.classList.remove('active');
+        
+        // Remove all joystick touches from tracking
+        this.activeJoystickTouches.clear();
         
         // Reset joystick to center
         this.joystickHandle.style.transform = 'translate(-50%, -50%)';
@@ -434,29 +575,44 @@ class MobilePortfolio3DRenderer {
     }
     
     /**
-     * Setup event listeners for mobile
+     * Enhanced setup event listeners with better multi-touch support
      */
     setupEventListeners() {
         window.addEventListener('resize', this.onWindowResize.bind(this));
         
-        // Touch events for mobile zoom (pinch)
+        // Touch events for mobile zoom (pinch) - enhanced to not conflict with other touches
         let initialPinchDistance = null;
         
+        // Combined touch event handler to avoid conflicts
         window.addEventListener('touchstart', (event) => {
+            // Handle pink light control
+            this.onTouchStart(event);
+            
+            // Handle pinch zoom if exactly 2 touches
             if (event.touches.length === 2) {
                 const touch1 = event.touches[0];
                 const touch2 = event.touches[1];
+                
+                // Calculate initial distance
                 initialPinchDistance = Math.hypot(
                     touch2.clientX - touch1.clientX,
                     touch2.clientY - touch1.clientY
                 );
+            } else {
+                // Reset pinch distance if not exactly 2 touches
+                initialPinchDistance = null;
             }
         }, { passive: true });
         
         window.addEventListener('touchmove', (event) => {
+            // Handle pink light control
+            this.onTouchMove(event);
+            
+            // Handle pinch zoom if exactly 2 touches and we have initial distance
             if (event.touches.length === 2 && initialPinchDistance) {
                 const touch1 = event.touches[0];
                 const touch2 = event.touches[1];
+                
                 const currentDistance = Math.hypot(
                     touch2.clientX - touch1.clientX,
                     touch2.clientY - touch1.clientY
@@ -467,6 +623,157 @@ class MobilePortfolio3DRenderer {
                 initialPinchDistance = currentDistance;
             }
         }, { passive: true });
+        
+        window.addEventListener('touchend', (event) => {
+            // Handle pink light control cleanup
+            this.onTouchEnd(event);
+            
+            // Reset pinch distance when touches end
+            if (event.touches.length < 2) {
+                initialPinchDistance = null;
+            }
+        }, { passive: true });
+    }
+    
+    /**
+     * Check if touch is within any control area (joystick OR Click Me button)
+     */
+    isTouchInControlsArea(clientX, clientY) {
+        // Check joystick area
+        if (this.joystickContainer) {
+            const joystickRect = this.joystickContainer.getBoundingClientRect();
+            const inJoystick = clientX >= joystickRect.left && 
+                              clientX <= joystickRect.right && 
+                              clientY >= joystickRect.top && 
+                              clientY <= joystickRect.bottom;
+            if (inJoystick) return true;
+        }
+        
+        // Check Click Me button area
+        if (this.clickMeBtn) {
+            const buttonRect = this.clickMeBtn.getBoundingClientRect();
+            const inButton = clientX >= buttonRect.left && 
+                            clientX <= buttonRect.right && 
+                            clientY >= buttonRect.top && 
+                            clientY <= buttonRect.bottom;
+            if (inButton) return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if touch is specifically within joystick area only
+     */
+    isTouchInJoystickArea(clientX, clientY) {
+        if (!this.joystickContainer) return false;
+        
+        const rect = this.joystickContainer.getBoundingClientRect();
+        return clientX >= rect.left && 
+               clientX <= rect.right && 
+               clientY >= rect.top && 
+               clientY <= rect.bottom;
+    }
+    
+    /**
+     * Handle touch start for pink light control - FIXED VERSION
+     */
+    onTouchStart(event) {
+        // For pink light control, we need to:
+        // 1. Ignore touches on ANY control area (joystick + Click Me button)
+        // 2. Support multi-touch where joystick can be active while other finger controls pink light
+        // 3. Ignore touches that are already controlling the joystick
+        
+        // Look for new touches that can control pink light
+        for (let i = 0; i < event.touches.length; i++) {
+            const touch = event.touches[i];
+            
+            // Skip if this touch is already controlling the joystick
+            if (this.activeJoystickTouches.has(touch.identifier)) {
+                continue;
+            }
+            
+            // Skip if this touch is already controlling pink light
+            if (this.activePinkLightTouches.has(touch.identifier)) {
+                continue;
+            }
+            
+            // Skip if this touch is in any control area
+            if (this.isTouchInControlsArea(touch.clientX, touch.clientY)) {
+                continue;
+            }
+            
+            // This is a new valid touch for pink light control
+            this.activePinkLightTouches.add(touch.identifier);
+            this.updatePinkLightPosition(touch.clientX, touch.clientY);
+            break; // Use the first new valid touch
+        }
+    }
+    
+    /**
+     * Handle touch move for pink light control - FIXED VERSION
+     */
+    onTouchMove(event) {
+        // First, check if any of the currently active pink light touches are still active
+        for (let i = 0; i < event.touches.length; i++) {
+            const touch = event.touches[i];
+            
+            // If this touch is already controlling pink light, continue following it
+            if (this.activePinkLightTouches.has(touch.identifier)) {
+                this.updatePinkLightPosition(touch.clientX, touch.clientY);
+                return; // Found the active pink light touch, update and exit
+            }
+        }
+        
+        // If no active pink light touches found, look for new valid touches
+        for (let i = 0; i < event.touches.length; i++) {
+            const touch = event.touches[i];
+            
+            // Skip if this touch is already controlling the joystick
+            if (this.activeJoystickTouches.has(touch.identifier)) {
+                continue;
+            }
+            
+            // Skip if this touch is in any control area
+            if (this.isTouchInControlsArea(touch.clientX, touch.clientY)) {
+                continue;
+            }
+            
+            // This is a new valid touch for pink light control
+            this.activePinkLightTouches.add(touch.identifier);
+            this.updatePinkLightPosition(touch.clientX, touch.clientY);
+            break; // Use the first new valid touch
+        }
+    }
+    
+    /**
+     * Handle touch end for pink light control
+     */
+    onTouchEnd(event) {
+        // Clean up tracking for ended touches
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            const touch = event.changedTouches[i];
+            this.activePinkLightTouches.delete(touch.identifier);
+        }
+    }
+    
+    /**
+     * Update pink light position based on touch
+     */
+    updatePinkLightPosition(clientX, clientY) {
+        this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+        
+        // Check if mouse position has actually changed
+        if (Math.abs(this.mouse.x - this.lastMouseX) > 0.001 || Math.abs(this.mouse.y - this.lastMouseY) > 0.001) {
+            this.mouseHasMoved = true;
+            this.lastMouseX = this.mouse.x;
+            this.lastMouseY = this.mouse.y;
+        }
+        
+        if (this.lensUniforms) {
+            this.lensUniforms.uMouse.value.copy(this.mouse);
+        }
     }
     
     /**
@@ -477,7 +784,6 @@ class MobilePortfolio3DRenderer {
         
         if (shouldShowOverlay && !this.overlayVisible) {
             this.overlay.classList.add('active');
-            this.fpsElement.style.opacity = '0.3';
             this.overlayVisible = true;
             this.hasSeenIntro = true;
             
@@ -488,7 +794,6 @@ class MobilePortfolio3DRenderer {
             console.log('Mobile introduction revealed');
         } else if (!shouldShowOverlay && this.overlayVisible) {
             this.overlay.classList.remove('active');
-            this.fpsElement.style.opacity = '0.7';
             this.overlayVisible = false;
             this.isTyping = false;
         }
@@ -525,11 +830,7 @@ class MobilePortfolio3DRenderer {
         const currentTime = performance.now();
         
         if (currentTime - this.lastTime >= 1000) {
-            const fps = Math.round((this.frameCount * 1000) / (currentTime - this.lastTime));
-            const calls = this.renderer.info.render.calls;
-            const triangles = this.renderer.info.render.triangles;
-            
-            this.fpsElement.textContent = `FPS: ${fps} | Calls: ${calls} | Tri: ${triangles}`;
+            // FPS monitoring removed for cleaner UI
             
             this.frameCount = 0;
             this.lastTime = currentTime;
@@ -552,7 +853,10 @@ class MobilePortfolio3DRenderer {
             Math.abs(this.targetRotation.y - this.currentRotation.y) > 0.001 ||
             Math.abs(this.targetScale - this.currentScale) > 0.001;
         
-        if (this.textMesh && (hasMovement || !this.renderRequested)) {
+        // Check if mouse has moved (for pink light)
+        const hasMouseMovement = this.mouseHasMoved;
+        
+        if (this.textMesh && (hasMovement || hasMouseMovement || !this.renderRequested)) {
             this.currentRotation.x += (this.targetRotation.x - this.currentRotation.x) * this.rotationDamping;
             this.currentRotation.y += (this.targetRotation.y - this.currentRotation.y) * this.rotationDamping;
             
@@ -565,12 +869,41 @@ class MobilePortfolio3DRenderer {
             this.wireframeTextMesh.rotation.copy(this.textMesh.rotation);
             this.wireframeTextMesh.scale.copy(this.textMesh.scale);
             
-            this.renderer.render(this.scene, this.camera);
+            this.render();
             this.renderRequested = true;
+            
+            // Reset mouse movement flag after rendering
+            this.mouseHasMoved = false;
         }
         
         this.updateOverlay();
         this.updatePerformance();
+    }
+    
+    /**
+     * Mobile-optimized multi-pass rendering
+     */
+    render() {
+        if (!this.textMesh || !this.wireframeTextMesh) {
+            return;
+        }
+        
+        // Pass 1: Render main metallic scene
+        this.renderer.setRenderTarget(this.mainRenderTarget);
+        this.renderer.render(this.scene, this.camera);
+        
+        // Pass 2: Render wireframe scene
+        this.renderer.setRenderTarget(this.wireframeRenderTarget);
+        this.renderer.render(this.wireframeScene, this.camera);
+        
+        // Pass 3: Composite with lens effect
+        this.renderer.setRenderTarget(null);
+        
+        const compositeScene = new THREE.Scene();
+        const compositeCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        compositeScene.add(this.compositeQuad);
+        
+        this.renderer.render(compositeScene, compositeCamera);
     }
     
     /**
@@ -593,14 +926,42 @@ class MobilePortfolio3DRenderer {
 /**
  * Initialize mobile portfolio when DOM is ready
  */
-document.addEventListener('DOMContentLoaded', () => {
+function initializeMobilePortfolio() {
     console.log('Starting Mobile Eva Qi Professional 3D Portfolio');
+    
+    // Check if Three.js is loaded
+    if (typeof THREE === 'undefined') {
+        console.error('Three.js is not loaded. Waiting for it...');
+        // Wait a bit and try again
+        setTimeout(() => {
+            if (typeof THREE !== 'undefined') {
+                console.log('Three.js loaded, initializing mobile portfolio...');
+                try {
+                    new MobilePortfolio3DRenderer();
+                } catch (error) {
+                    console.error('Mobile initialization error:', error);
+                }
+            } else {
+                console.error('Three.js failed to load for mobile');
+            }
+        }, 1000);
+        return;
+    }
+    
     try {
         new MobilePortfolio3DRenderer();
     } catch (error) {
         console.error('Mobile initialization error:', error);
     }
-});
+}
+
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeMobilePortfolio);
+} else {
+    // DOM is already loaded, initialize immediately
+    initializeMobilePortfolio();
+}
 
 /**
  * Mobile error handler

@@ -49,13 +49,12 @@ class OptimizedPortfolio3DRenderer {
         this.overlay = document.getElementById('overlay');
         this.timedHint = document.getElementById('timed-hint');
         this.info = document.getElementById('info');
-        this.fpsElement = document.getElementById('fps');
         this.overlayVisible = false;
         
-        // Device detection
-        this.isMobile = this.detectMobile();
-        this.isTablet = this.detectTablet();
-        this.deviceType = this.getDeviceType();
+        // Device detection (use global device detector if available)
+        this.isMobile = window.deviceDetector ? window.deviceDetector.isMobile : this.detectMobile();
+        this.isTablet = window.deviceDetector ? window.deviceDetector.isTablet : this.detectTablet();
+        this.deviceType = window.deviceDetector ? window.deviceDetector.deviceType : this.getDeviceType();
         
         // Mobile controls
         this.mobileControls = document.getElementById('mobileControls');
@@ -93,25 +92,19 @@ class OptimizedPortfolio3DRenderer {
     }
     
     /**
-     * Detect if device is mobile for conditional features
+     * Fallback device detection methods (used only if device detector not available)
      */
     detectMobile() {
         return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                (window.innerWidth <= 768);
     }
     
-    /**
-     * Detect if device is tablet
-     */
     detectTablet() {
         return /iPad|Android/i.test(navigator.userAgent) && 
                window.innerWidth > 768 && 
                window.innerWidth <= 1024;
     }
     
-    /**
-     * Get device type
-     */
     getDeviceType() {
         if (this.isMobile) return 'mobile';
         if (this.isTablet) return 'tablet';
@@ -381,20 +374,18 @@ class OptimizedPortfolio3DRenderer {
             roughness: 0.05
         });
         
-        // Create outline effect instead of wireframe
-        const outlineGeometry = textGeometry.clone();
-        outlineGeometry.scale(1.02, 1.02, 1.02); // Slightly larger for outline
-        
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
+        // Create edge outline effect using EdgeGeometry
+        const edges = new THREE.EdgesGeometry(textGeometry);
+        const wireframeMaterial = new THREE.LineBasicMaterial({
             color: 0xffffff,
-            side: THREE.BackSide // Only show back faces for outline effect
+            linewidth: 2
         });
         
         this.textMesh = new THREE.Mesh(textGeometry, metallicMaterial);
         this.scene.add(this.textMesh);
         
-        // Create outline mesh instead of wireframe
-        this.wireframeTextMesh = new THREE.Mesh(outlineGeometry, wireframeMaterial);
+        // Create edge outline using LineSegments
+        this.wireframeTextMesh = new THREE.LineSegments(edges, wireframeMaterial);
         this.wireframeScene.add(this.wireframeTextMesh);
         
         console.log('Optimized 3D text created');
@@ -425,15 +416,13 @@ class OptimizedPortfolio3DRenderer {
         this.textMesh = new THREE.Mesh(geometry, material);
         this.scene.add(this.textMesh);
         
-        // Create outline effect for fallback geometry
-        const outlineGeometry = geometry.clone();
-        outlineGeometry.scale(1.02, 1.02, 1.02);
-        
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
+        // Create edge outline effect for fallback geometry
+        const edges = new THREE.EdgesGeometry(geometry);
+        const wireframeMaterial = new THREE.LineBasicMaterial({
             color: 0xffffff,
-            side: THREE.BackSide
+            linewidth: 2
         });
-        this.wireframeTextMesh = new THREE.Mesh(outlineGeometry, wireframeMaterial);
+        this.wireframeTextMesh = new THREE.LineSegments(edges, wireframeMaterial);
         this.wireframeScene.add(this.wireframeTextMesh);
         
         console.log('Using fallback geometry');
@@ -692,7 +681,6 @@ class OptimizedPortfolio3DRenderer {
         
         if (shouldShowOverlay && !this.overlayVisible) {
             this.overlay.classList.add('active');
-            this.fpsElement.style.opacity = '0.3';
             this.overlayVisible = true;
             this.hasSeenIntro = true;
             
@@ -707,7 +695,6 @@ class OptimizedPortfolio3DRenderer {
             console.log('Introduction revealed');
         } else if (!shouldShowOverlay && this.overlayVisible) {
             this.overlay.classList.remove('active');
-            this.fpsElement.style.opacity = '0.7';
             this.overlayVisible = false;
             this.isTyping = false;
         }
@@ -757,11 +744,7 @@ class OptimizedPortfolio3DRenderer {
         const currentTime = performance.now();
         
         if (currentTime - this.lastTime >= 1000) {
-            const fps = Math.round((this.frameCount * 1000) / (currentTime - this.lastTime));
-            const calls = this.renderer.info.render.calls;
-            const triangles = this.renderer.info.render.triangles;
-            
-            this.fpsElement.textContent = `FPS: ${fps} | Calls: ${calls} | Tri: ${triangles}`;
+            // FPS monitoring removed for cleaner UI
             
             this.frameCount = 0;
             this.lastTime = currentTime;
